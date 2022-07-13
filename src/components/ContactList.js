@@ -18,6 +18,7 @@ const ContactList = (props) => {
   const deleteConactHandler = (id) => {
     props.getContactId(id);
   };
+  // console.log(props.userState.users)
 
   const renderContactList = props.contacts.map((contact) => {
     return (

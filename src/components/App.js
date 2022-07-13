@@ -13,10 +13,31 @@ import Login from "./login"
 import Signup from "./singup"
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import { connect, useDispatch, useSelector  } from 'react-redux';
+import {fetchusers} from '../redux/actions/fetchemployees';
 
-function App() {
+
+function App(props) {
 
   const [contacts, setContacts] = useState([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    
+    const getAllCOntacts = async () => {
+      // const allContacts = await retrieveContacts();
+      await handleemployees ()
+      if (props.userState.users) setContacts(props.userState.users);
+    };
+    handleemployees ()
+    getAllCOntacts();
+  }, []);
+
+
+  const handleemployees = async () => {
+    dispatch(fetchusers())
+ }
+ console.log(props.userState.users)
+ console.log(contacts)
 
   //RetrieveContacts
   const retrieveContacts = async () => {
@@ -90,17 +111,7 @@ function App() {
     doc.save("report.pdf")
   }
 
-  useEffect(() => {
-    // const retriveContacts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    // if (retriveContacts) setContacts(retriveContacts);
-    const getAllCOntacts = async () => {
-      const allContacts = await retrieveContacts();
-      if (allContacts) setContacts(allContacts);
-    };
-
-    getAllCOntacts();
-  }, []);
-
+  
   useEffect(() => {
     //localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts));
   }, [contacts]);
@@ -167,4 +178,10 @@ function App() {
   );
 }
 
-export default App;
+// export default App;
+const mapStateToProps = (fetchuserss) => {
+  return {
+  userState:fetchuserss.fetchusers,
+}}
+
+export default connect(mapStateToProps, { fetchusers })(App) 
