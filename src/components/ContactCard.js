@@ -4,21 +4,24 @@ import user from "../images/user.png";
 
 const ContactCard = (props) => {
   const { id, name, email ,position,task} = props.contact;
+  console.log(id)
   return (
     <div className="item">
       <img className="ui avatar image" src={user} alt="user" />
       <div className="content">
         <Link
-          to={{ pathname: `/contact/${id}`, state: { contact: props.contact } }}
+          // to={{ pathname: `/contact/${id}`, state: { contact: props.contact } }}
         >
-          <div className="header">{name}</div>
-          <div>{email}</div>
+          
+          <div className="header"> <label>NAMES  :</label>&nbsp;{name}</div>
+          <div> <label>email :</label>&nbsp;{email}</div>
         </Link>
-        <div>{position}</div>
-        <div>
+        <div> <label>position  :</label>&nbsp;{position}</div>
+        <div style={{display:"flex",justifyContent:"start"}}>
+          <div>
           <label style={{textDecoration:"overline underline", backgroundColor: "black",
-     color: "white"}}>tasks</label>
-          {task ? task.map((item,index)=>(<li>{item.todo}</li>)):null}</div>
+     color: "white"}}>tasks</label></div>
+         <div> {task ? task.map((item,index)=>(<li>{item.todo}</li>)):null}</div></div>
       </div>
       <i
         className="trash alternate outline icon"
@@ -28,7 +31,7 @@ const ContactCard = (props) => {
       <Link to={{ pathname: `/edit`, state: { contact: props.contact } }}>
         <i
           className="edit alternate outline icon"
-          style={{ color: "blue", marginTop: "7px" }}
+          style={{ color: "blue", marginTop:"7px" }}
         ></i>
       </Link>
       <Link to={{ pathname: `/addtask`, state: { contact: props.contact } }}>

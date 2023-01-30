@@ -34,7 +34,7 @@ const ContactDetail = (props) => {
       <div className="center-div">
         <Link to="/">
           <button className="ui button blue center">
-            Back to employee List
+            Back to login
           </button>
         </Link>
       </div>

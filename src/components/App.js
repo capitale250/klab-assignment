@@ -6,15 +6,18 @@ import "./App.css";
 import Header from "./Header";
 import AddContact from "./AddContact";
 import ContactList from "./ContactList";
+import ContactList2 from "./contactlist2";
 import ContactDetail from "./ContactDetail";
 import EditContact from "./EditContact";
 import Addtsk from "./addtasks";
 import Login from "./login"
+import Apps from "../api/login/login"
 import Signup from "./singup"
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { connect, useDispatch, useSelector  } from 'react-redux';
 import {fetchusers} from '../redux/actions/fetchemployees';
+import {postemployee} from '../redux/actions/fetchemployees';
 
 
 function App(props) {
@@ -24,9 +27,11 @@ function App(props) {
   useEffect(() => {
     
     const getAllCOntacts = async () => {
-      // const allContacts = await retrieveContacts();
-      await handleemployees ()
-      if (props.userState.users) setContacts(props.userState.users);
+      const allContacts = await retrieveContacts();
+      // const allContacts = props.userState.users
+      // await handleemployees ()
+      // if (props.userState.contacts) setContacts(props.userState.contacts);
+      if ( allContacts) setContacts( allContacts);
     };
     handleemployees ()
     getAllCOntacts();
@@ -36,13 +41,17 @@ function App(props) {
   const handleemployees = async () => {
     dispatch(fetchusers())
  }
- console.log(props.userState.users)
- console.log(contacts)
+//  console.log(props)
+//  console.log(props.userState.contacts)
+//  console.log(contacts)
 
   //RetrieveContacts
   const retrieveContacts = async () => {
-    const response = await api.get("/contacts");
-    return response.data;
+    // const response = await api.get("/contacts");
+    // return response.data;
+    const response = await props.userState.contacts
+    console.log(response)
+    return response
   };
 
   const addContactHandler = async (contact) => {
@@ -52,10 +61,11 @@ function App(props) {
       task:[],
       ...contact,
     };
-
-    const response = await api.post("/contacts", request);
-    console.log(response);
-    setContacts([...contacts, response.data]);
+    //  console.log(request);
+    // const response = await api.post("/contacts", request);
+     dispatch(postemployee(request))
+    console.log(props);
+    // setContacts([...contacts, response.data]);
   };
 
   const updateContactHandler = async (contact) => {
@@ -122,7 +132,7 @@ function App(props) {
         <Header />
         <Switch>
           <Route
-            path="/"
+            path="/employer"
             exact
             render={(props) => (
               <ContactList
@@ -133,7 +143,18 @@ function App(props) {
             )}
           />
            <Route
-            path="/allemployee"
+            path="/admin"
+            exact
+            render={(props) => (
+              <ContactList2
+                {...props}
+                contacts={contacts}
+                getContactId={removeContactHandler}
+              />
+            )}
+          />
+           <Route
+            path="/employee"
             exact
             render={(props) => (
               <ContactDetail
@@ -169,8 +190,8 @@ function App(props) {
             )}
           />
 
-          <Route path="/contact/:id" component={ContactDetail} />
-          <Route path="/login" component={Login} />
+          {/* <Route path="/employee" component={ContactDetail} /> */}
+          <Route path="/" component={Apps} />
           <Route path="/signup" component={Signup} />
         </Switch>
       </Router>
@@ -182,6 +203,7 @@ function App(props) {
 const mapStateToProps = (fetchuserss) => {
   return {
   userState:fetchuserss.fetchusers,
+
 }}
 
-export default connect(mapStateToProps, { fetchusers })(App) 
+export default connect(mapStateToProps, { fetchusers,postemployee })(App) 

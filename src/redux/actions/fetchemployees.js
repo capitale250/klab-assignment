@@ -14,3 +14,16 @@ export const fetchusers = () => dispatch => {
     )
    
 }
+export const postemployee = (employee) => dispatch => {
+  
+  return Axios.post(`/contacts`,employee)
+    .then(res => {
+      console.log(res)
+      dispatch({
+        type: actions.POST_AN_EMPLOYEE,
+        payload: res.data
+      })
+      }
+    )
+   
+}

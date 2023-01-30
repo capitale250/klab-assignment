@@ -1,111 +1,106 @@
-import { useRef, useState, useEffect, useContext } from 'react';
-import AuthContext from './context/AuthProvider';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
 
-import axios from './api/axios';
-const LOGIN_URL = '/auth';
+import "./style.css";
 
-const Login = () => {
-	const { setAuth } = useContext(AuthContext);
-	const userRef = useRef();
-	const errRef = useRef();
+function App() {
+  // React States
+  const [errorMessages, setErrorMessages] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-	const [user, setUser] = useState('');
-	const [pwd, setPwd] = useState('');
-	const [errMsg, setErrMsg] = useState('');
-	const [success, setSuccess] = useState(false);
+  // User Login info
+  const database = [
+    {
+      username: "user1",
+      password: "pass1",
+	  role:"admin"
+    },
+    {
+      username: "user2",
+      password: "pass2",
+	  role:"employer"
+    },
+	{
+		username: "user3",
+		password: "pass3",
+		role:"employee"
+	  }
 
-	useEffect(() => {
-		userRef.current.focus();
-	}, []);
+  ];
 
-	useEffect(() => {
-		setErrMsg('');
-	}, [user, pwd]);
+  const errors = {
+    uname: "invalid username",
+    pass: "invalid password"
+  };
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+  const handleSubmit = (event) => {
+    //Prevent page reload
+    event.preventDefault();
 
-		try {
-			const response = await axios.post(
-				LOGIN_URL,
-				JSON.stringify({ user, pwd }),
-				{
-					headers: { 'Content-Type': 'application/json' },
-					withCredentials: true,
-				}
-			);
+    var { uname, pass } = document.forms[0];
 
-			const accessToken = response?.data?.accessToken;
-			const roles = response?.data?.roles;
-			setAuth({ user, pwd, roles, accessToken });
-			setUser('');
-			setPwd('');
-			setSuccess(true);
-		} catch (err) {
-			if (!err?.response) {
-				setErrMsg('No Server Response');
-			} else if (err.response?.status === 400) {
-				setErrMsg('Missing Username or Password');
-			} else if (err.response?.status === 401) {
-				setErrMsg('Unauthorized');
-			} else {
-				setErrMsg('Login Failed');
-			}
-			errRef.current.focus();
-		}
-	};
+    // Find user login info
+    const userData = database.find((user) => user.username === uname.value);
 
-	return (
-		<>
-			{success ? (
-				<section>
-					<h1>You are logged in!</h1>
-					<br />
-					<p>{/* <a href="#">Go to Home</a> */}</p>
-				</section>
-			) : (
-				<section>
-					<p
-						ref={errRef}
-						className={errMsg ? 'errmsg' : 'offscreen'}
-						aria-live="assertive"
-					>
-						{errMsg}
-					</p>
-					<h1>Sign In</h1>
-					<form onSubmit={handleSubmit}>
-						<label htmlFor="username">Username:</label>
-						<input
-							type="text"
-							id="username"
-							ref={userRef}
-							autoComplete="off"
-							onChange={(e) => setUser(e.target.value)}
-							value={user}
-							required
-						/>
+    // Compare user info
+    if (userData) {
+      if (userData.password !== pass.value) {
+        // Invalid password
+        setErrorMessages({ name: "pass", message: errors.pass });
+      } if(userData.role == "admin"){
+        setIsSubmitted(true);
+		window.location.replace('/admin');
+      }if(userData.role == "employer"){
+        setIsSubmitted(true);
+		window.location.replace('/employer');
+      }if(userData.role == "employee"){
+        setIsSubmitted(true);
+		window.location.replace('/employee');
+    }else{
+      setErrorMessages({ pass: "uname", message: errors.uname });
 
-						<label htmlFor="password">Password:</label>
-						<input
-							type="password"
-							id="password"
-							onChange={(e) => setPwd(e.target.value)}
-							value={pwd}
-							required
-						/>
-						<button>Sign In</button>
-					</form>
-					<p>
-						Need an Account?
-						<br />
-						<span className="line">
-							<a href="/">Sign Up</a>
-						</span>
-					</p>
-				</section>
-			)}
-		</>
-	);
-};
+    }
+    } else {
+      // Username not found
+      setErrorMessages({ name: "uname", message: errors.pass });
+    }
+  };
 
-export default Login;
+  // Generate JSX code for error message
+  const renderErrorMessage = (name) =>
+    name === errorMessages.name && (
+      <div className="error">{errorMessages.message}</div>
+    );
+
+  // JSX code for login form
+  const renderForm = (
+    <div className="form">
+      <form onSubmit={handleSubmit}>
+        <div className="input-container">
+          <label>Username </label>
+          <input type="text" name="uname" required />
+          {renderErrorMessage("uname")}
+        </div>
+        <div className="input-container">
+          <label>Password </label>
+          <input type="password" name="pass" required />
+          {renderErrorMessage("pass")}
+        </div>
+        <div className="button-container">
+          <input type="submit" />
+        </div>
+      </form>
+    </div>
+  );
+
+  return (
+    <div className="app">
+      <div className="login-form">
+        <div className="title">Sign In</div>
+        {isSubmitted ? <div>User is successfully logged in</div> : renderForm}
+      </div>
+    </div>
+  );
+}
+
+export default App;

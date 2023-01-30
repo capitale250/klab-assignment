@@ -18,7 +18,7 @@ const ContactList = (props) => {
   const deleteConactHandler = (id) => {
     props.getContactId(id);
   };
-  // console.log(props.userState.users)
+  // console.log(props.userState)
 
   const renderContactList = props.contacts.map((contact) => {
     return (
@@ -60,16 +60,19 @@ const ContactList = (props) => {
     <div className="main">
       <h2>
         employee List
-        <Link to="/add">
+        {/* <Link to="/add">
           <button className="ui button blue right">Add employee</button>
+        </Link> */}
+        <Link to="/">
+          <button className="ui button blue right">logout</button>
         </Link>
       </h2>
       <div className="ui celled list">{renderContactList}</div>
       <div>
-        <button onClick={() => exportPDF()}>Generate Report</button>
+        <button className="ui button blue right" onClick={() => exportPDF()}>Generate pdf Report</button>
       </div>
       <div>
-      <button >
+      {/* <button className="ui button blue right" > */}
           {props.contacts?.length &&
             <CSVLink
               headers={fileHeaders}
@@ -77,10 +80,11 @@ const ContactList = (props) => {
               filename="results.csv"
               target="_blank"
             >
-              Export
+          
+              <button className="ui button blue right">Export to csv</button>
             </CSVLink>
           }
-          </button>
+          {/* </button> */}
   </div>
     </div>
   );

@@ -45,7 +45,7 @@ const Addtsk  = (props) => {
      console.log(send)
     props.updateContactHandler(send);
     // this.setState({ task: ""});
-    props.history.push("/");
+    props.history.push("/employer");
   };
   // render() {
     return (
